@@ -160,9 +160,9 @@
 
         @keyframes shimmer { to { left: 100%; } }
 
-        /* === Финальный экран (после нажатия) === */
+        /* === ФИНАЛЬНЫЙ ЭКРАН с фото Димы === */
         .reveal {
-            position: absolute;
+            position: fixed;
             inset: 0;
             z-index: 10;
             display: flex;
@@ -175,6 +175,7 @@
             transform: scale(0.7);
             pointer-events: none;
             transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow-y: auto;
         }
 
         .reveal.show {
@@ -183,26 +184,76 @@
             pointer-events: auto;
         }
 
-        .reveal-heart {
-            font-size: 120px;
-            color: #ff2d55;
-            animation: heartBeatBig 1s infinite, heartPopIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            filter: drop-shadow(0 15px 40px rgba(255, 45, 85, 0.7));
-            margin-bottom: 20px;
-            display: inline-block;
+        /* === Рамка с фото Димы === */
+        .photo-frame {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 28px;
+            border-radius: 50%;
+            padding: 8px;
+            background: conic-gradient(from 0deg,
+                #ff5e7e, #ff2d55, #ffb84d, #ff5e7e, #6a82fb, #ff5e7e);
+            box-shadow:
+                0 0 0 6px rgba(255, 255, 255, 0.15),
+                0 25px 60px rgba(255, 45, 85, 0.5),
+                0 0 80px rgba(255, 184, 77, 0.4);
+            animation: spinGradient 8s linear infinite, framePopIn 1s cubic-bezier(0.34, 1.56, 0.64, 1),
+                       frameGlow 2.4s ease-in-out infinite 1s;
         }
 
-        @keyframes heartBeatBig {
-            0%, 100% { transform: scale(1); }
-            25%      { transform: scale(1.1); }
-            50%      { transform: scale(0.95); }
-            75%      { transform: scale(1.08); }
+        @keyframes spinGradient {
+            to { transform: rotate(360deg); }
         }
 
-        @keyframes heartPopIn {
-            0%   { transform: scale(0) rotate(-30deg); opacity: 0; }
-            60%  { transform: scale(1.2) rotate(8deg); opacity: 1; }
+        @keyframes frameGlow {
+            0%, 100% { box-shadow: 0 0 0 6px rgba(255,255,255,0.15),
+                                   0 25px 60px rgba(255, 45, 85, 0.5),
+                                   0 0 80px rgba(255, 184, 77, 0.4); }
+            50%      { box-shadow: 0 0 0 8px rgba(255,255,255,0.25),
+                                   0 30px 80px rgba(255, 45, 85, 0.7),
+                                   0 0 120px rgba(255, 184, 77, 0.6); }
+        }
+
+        @keyframes framePopIn {
+            0%   { transform: scale(0) rotate(-180deg); opacity: 0; }
+            60%  { transform: scale(1.15) rotate(10deg); opacity: 1; }
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            background: #1e3c72;
+        }
+
+        /* Вращающаяся рамка не должна вращать само фото */
+        .photo-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            animation: counterSpin 8s linear infinite;
+        }
+
+        @keyframes counterSpin {
+            to { transform: rotate(-360deg); }
+        }
+
+        /* === Подпись под фото === */
+        .reveal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 44px;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+            text-shadow: 0 6px 30px rgba(0, 0, 0, 0.5),
+                         0 0 60px rgba(255, 94, 126, 0.7);
+            animation: textPopIn 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
         }
 
         .reveal-text {
@@ -213,7 +264,7 @@
             letter-spacing: -1px;
             text-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 80px rgba(255, 45, 85, 0.6);
             line-height: 1;
-            animation: textPopIn 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+            animation: textPopIn 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s both;
         }
 
         @keyframes textPopIn {
@@ -224,13 +275,14 @@
         .reveal-sub {
             margin-top: 24px;
             font-size: 18px;
-            color: #c5d3f0;
+            color: #ffd9e0;
             font-weight: 500;
-            animation: textPopIn 0.8s ease 0.7s both;
+            line-height: 1.5;
+            animation: textPopIn 0.8s ease 0.8s both;
         }
 
         .btn-back {
-            margin-top: 36px;
+            margin-top: 32px;
             background: rgba(255, 255, 255, 0.15);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -254,6 +306,19 @@
             font-size: 12px;
             color: #8da5d6;
         }
+
+        /* === Звёзды-искры вокруг фото === */
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            font-size: 24px;
+            animation: sparkleAnim 1.6s ease-in-out infinite;
+        }
+
+        @keyframes sparkleAnim {
+            0%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); }
+            50%      { opacity: 1; transform: scale(1.2) rotate(180deg); }
+        }
     </style>
 </head>
 <body>
@@ -270,9 +335,18 @@
         <div class="footer-note">Сделано специально для тебя</div>
     </div>
 
-    <!-- ФИНАЛЬНЫЙ ЭКРАН -->
+    <!-- ФИНАЛЬНЫЙ ЭКРАН с фото -->
     <div class="reveal" id="reveal">
-        <div class="reveal-heart">❤️</div>
+        <div class="photo-frame">
+            <div class="photo-inner">
+                <img src="assets/dima.jpg" alt="Дима">
+            </div>
+            <span class="sparkle" style="top:-10px; left:50%; animation-delay:0s;">✨</span>
+            <span class="sparkle" style="top:50%; right:-18px; animation-delay:0.3s;">⭐</span>
+            <span class="sparkle" style="bottom:-10px; left:50%; animation-delay:0.6s;">✨</span>
+            <span class="sparkle" style="top:50%; left:-18px; animation-delay:0.9s;">⭐</span>
+        </div>
+        <div class="reveal-title">Это же ты, Дима! 😎</div>
         <div class="reveal-text">уебок</div>
         <div class="reveal-sub">ну правда, ты уебок 😊<br>но я тебя всё равно люблю, бро 💙</div>
         <button class="btn-back" onclick="backToStart()">← Ещё раз</button>
@@ -305,15 +379,15 @@
 
         // Взрыв сердечек при показе
         function launchBurst() {
-            const symbols = ['❤️', '💖', '💕', '💙', '💗', '✨', '💜'];
-            const count = 36;
+            const symbols = ['❤️', '💖', '💕', '💙', '💗', '✨', '💜', '😂'];
+            const count = 48;
             for (let i = 0; i < count; i++) {
                 const heart = document.createElement('div');
                 heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
                 heart.style.position = 'fixed';
                 heart.style.zIndex = '5';
                 heart.style.pointerEvents = 'none';
-                heart.style.fontSize = (18 + Math.random() * 26) + 'px';
+                heart.style.fontSize = (18 + Math.random() * 28) + 'px';
                 const startX = window.innerWidth / 2;
                 const startY = window.innerHeight / 2;
                 heart.style.left = startX + 'px';
@@ -321,14 +395,14 @@
                 document.body.appendChild(heart);
 
                 const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
-                const distance = 150 + Math.random() * 320;
+                const distance = 180 + Math.random() * 360;
                 const dx = Math.cos(angle) * distance;
                 const dy = Math.sin(angle) * distance;
-                const duration = 900 + Math.random() * 700;
+                const duration = 1100 + Math.random() * 800;
 
                 heart.animate([
                     { transform: 'translate(-50%, -50%) scale(0.3) rotate(0deg)', opacity: 1 },
-                    { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1.1) rotate(${(Math.random() - 0.5) * 180}deg)`, opacity: 0 }
+                    { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1.1) rotate(${(Math.random() - 0.5) * 220}deg)`, opacity: 0 }
                 ], {
                     duration: duration,
                     easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
