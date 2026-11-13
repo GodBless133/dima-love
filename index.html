@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дима, это тебе 💙</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            min-height: 100vh;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #6a82fb 100%);
+            font-family: 'Montserrat', sans-serif;
+            color: #e8eefc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            background-size: 200% 200%;
+            animation: bgShift 18s ease infinite;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { background-position: 0% 50%; }
+            50%      { background-position: 100% 50%; }
+        }
+
+        /* Плавающие сердечки на фоне */
+        .bg-hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .bg-heart {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 22px;
+            animation: floatUp 7s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0%   { transform: translateY(105vh) scale(0.5); opacity: 0; }
+            50%  { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        /* === КАРТОЧКА-ИНТРО === */
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 50px 36px;
+            border-radius: 32px;
+            text-align: center;
+            max-width: 460px;
+            width: 90%;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+            z-index: 2;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .card.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .heart-icon {
+            font-size: 60px;
+            color: #ff5e7e;
+            animation: heartbeat 1.4s infinite;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 8px 20px rgba(255, 94, 126, 0.6));
+            display: inline-block;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.18); }
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 34px;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 14px;
+            letter-spacing: -0.5px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #c5d3f0;
+            margin-bottom: 32px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* === Кнопка «Нажми меня» === */
+        .btn {
+            position: relative;
+            background: linear-gradient(135deg, #ff5e7e 0%, #ff2d55 100%);
+            color: white;
+            border: none;
+            padding: 18px 44px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 10px 30px rgba(255, 45, 85, 0.55);
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            animation: glowPulse 2.2s infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 10px 30px rgba(255, 45, 85, 0.55); }
+            50%      { box-shadow: 0 14px 44px rgba(255, 45, 85, 0.85); }
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 16px 44px rgba(255, 45, 85, 0.75);
+        }
+
+        .btn:active { transform: translateY(1px) scale(0.97); }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+            animation: shimmer 2.6s infinite;
+        }
+
+        @keyframes shimmer { to { left: 100%; } }
+
+        /* === Финальный экран (после нажатия) === */
+        .reveal {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.7);
+            pointer-events: none;
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .reveal.show {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .reveal-heart {
+            font-size: 120px;
+            color: #ff2d55;
+            animation: heartBeatBig 1s infinite, heartPopIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 15px 40px rgba(255, 45, 85, 0.7));
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        @keyframes heartBeatBig {
+            0%, 100% { transform: scale(1); }
+            25%      { transform: scale(1.1); }
+            50%      { transform: scale(0.95); }
+            75%      { transform: scale(1.08); }
+        }
+
+        @keyframes heartPopIn {
+            0%   { transform: scale(0) rotate(-30deg); opacity: 0; }
+            60%  { transform: scale(1.2) rotate(8deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .reveal-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 72px;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: -1px;
+            text-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 80px rgba(255, 45, 85, 0.6);
+            line-height: 1;
+            animation: textPopIn 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+        }
+
+        @keyframes textPopIn {
+            0%   { transform: translateY(40px) scale(0.5); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .reveal-sub {
+            margin-top: 24px;
+            font-size: 18px;
+            color: #c5d3f0;
+            font-weight: 500;
+            animation: textPopIn 0.8s ease 0.7s both;
+        }
+
+        .btn-back {
+            margin-top: 36px;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 30px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.2s ease;
+            animation: textPopIn 0.8s ease 1.1s both;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .footer-note {
+            margin-top: 28px;
+            font-size: 12px;
+            color: #8da5d6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Фон с летящими сердечками -->
+    <div class="bg-hearts" id="bgHearts"></div>
+
+    <!-- ОСНОВНАЯ КАРТОЧКА -->
+    <div class="card show" id="mainCard">
+        <div class="heart-icon">💙</div>
+        <h1>Дима, это тебе</h1>
+        <p class="subtitle">Я подготовил для тебя кое-что особенное...<br>Нажми на кнопку ниже 👇</p>
+        <button class="btn" onclick="reveal()">Нажми меня 💥</button>
+        <div class="footer-note">Сделано специально для тебя</div>
+    </div>
+
+    <!-- ФИНАЛЬНЫЙ ЭКРАН -->
+    <div class="reveal" id="reveal">
+        <div class="reveal-heart">❤️</div>
+        <div class="reveal-text">уебок</div>
+        <div class="reveal-sub">ну правда, ты уебок 😊<br>но я тебя всё равно люблю, бро 💙</div>
+        <button class="btn-back" onclick="backToStart()">← Ещё раз</button>
+    </div>
+
+    <script>
+        function reveal() {
+            document.getElementById('mainCard').style.opacity = '0';
+            document.getElementById('mainCard').style.transform = 'scale(0.85)';
+            setTimeout(() => {
+                document.getElementById('mainCard').style.display = 'none';
+                document.getElementById('reveal').classList.add('show');
+                launchBurst();
+            }, 350);
+        }
+
+        function backToStart() {
+            document.getElementById('reveal').classList.remove('show');
+            setTimeout(() => {
+                const card = document.getElementById('mainCard');
+                card.style.display = 'block';
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px) scale(0.95)';
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0) scale(1)';
+                }, 30);
+            }, 400);
+        }
+
+        // Взрыв сердечек при показе
+        function launchBurst() {
+            const symbols = ['❤️', '💖', '💕', '💙', '💗', '✨', '💜'];
+            const count = 36;
+            for (let i = 0; i < count; i++) {
+                const heart = document.createElement('div');
+                heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                heart.style.position = 'fixed';
+                heart.style.zIndex = '5';
+                heart.style.pointerEvents = 'none';
+                heart.style.fontSize = (18 + Math.random() * 26) + 'px';
+                const startX = window.innerWidth / 2;
+                const startY = window.innerHeight / 2;
+                heart.style.left = startX + 'px';
+                heart.style.top = startY + 'px';
+                document.body.appendChild(heart);
+
+                const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+                const distance = 150 + Math.random() * 320;
+                const dx = Math.cos(angle) * distance;
+                const dy = Math.sin(angle) * distance;
+                const duration = 900 + Math.random() * 700;
+
+                heart.animate([
+                    { transform: 'translate(-50%, -50%) scale(0.3) rotate(0deg)', opacity: 1 },
+                    { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1.1) rotate(${(Math.random() - 0.5) * 180}deg)`, opacity: 0 }
+                ], {
+                    duration: duration,
+                    easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                    fill: 'forwards'
+                });
+
+                setTimeout(() => heart.remove(), duration + 100);
+            }
+        }
+
+        // Генерация плавающих сердечек на фоне
+        const bgHearts = document.getElementById('bgHearts');
+        const heartSymbols = ['❤️', '💖', '💙', '💕', '💜'];
+
+        function createBgHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('bg-heart');
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 5) + 's';
+            heart.style.fontSize = (Math.random() * 15 + 14) + 'px';
+            heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+            bgHearts.appendChild(heart);
+
+            setTimeout(() => { heart.remove(); }, 8000);
+        }
+
+        setInterval(createBgHeart, 450);
+    </script>
+</body>
+</html>
